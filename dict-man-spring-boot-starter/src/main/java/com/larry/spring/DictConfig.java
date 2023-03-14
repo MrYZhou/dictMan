@@ -1,6 +1,8 @@
 package com.larry.spring;
 
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,8 +17,8 @@ public class DictConfig {
     // 初始化字典服务
     @Bean
     @Primary
-    public MybatisDictService dictService() {
-
+    @ConditionalOnClass(SqlSessionFactory.class)
+    public MybatisDictService mybatisDictService() {
         return new MybatisDictService();
     }
     // 切面

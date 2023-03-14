@@ -1,9 +1,6 @@
 package com.larry.spring;
 
-import com.larry.trans.DictMany;
-import com.larry.trans.DictOne;
-import com.larry.trans.DictService;
-import com.larry.trans.DictValue;
+import com.larry.trans.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,6 +34,14 @@ public class DictAop {
             Class<?> returnType = dictHelper.returnType;
             Class<?> dictParseClass = dictHelper.dictParseClass;
             Field[] declaredFields = dictParseClass.getDeclaredFields();
+
+            // 多关联表
+            RelationTables relationTables = dictParseClass.getDeclaredAnnotation(RelationTables.class);
+            // 单关联表
+            RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
+            Class<?> target = relationTable.target();
+
+
             proceed = joinPoint.proceed();
             ONode data = ONode.load(proceed);
             String key = dictHelper.key;

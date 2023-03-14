@@ -12,11 +12,14 @@ public @interface DictValue {
     // 需要联表的类
     Class<?> targetTable() default Object.class;
 
-    // 联表的字段
-    String targetField() default "";
+    // 关联表的字段
+    String value() default "";
 
-    // 返回的json中要翻译的
-    String sourceField() default "";
+    // 多张联表需要额外指定表名，避免相同属性冲突
+    String table() default "";
+
+    // 使用新字段保存翻译结果
+    String newKey() default "";
 
     // 是字典类别的key
     String ref() default "dictMan";
