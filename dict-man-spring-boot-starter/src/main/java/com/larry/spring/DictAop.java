@@ -1,7 +1,13 @@
 package com.larry.spring;
 
+import com.larry.handle.HandleChain;
+import com.larry.handle.RelationTableHandler;
+import com.larry.handle.RelationTablesHandler;
+import com.larry.handle.SimpleDataHandler;
 import com.larry.service.DictService;
-import com.larry.trans.*;
+import com.larry.trans.DictMany;
+import com.larry.trans.DictOne;
+import com.larry.trans.DictValue;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,6 +28,15 @@ import java.util.Map;
 public class DictAop {
 
     static DictHelper dictHelper = new DictHelper();
+    static HandleChain chain = null;
+
+    static {
+        chain = new SimpleDataHandler();
+        HandleChain chain2 = chain.setNextHandleChain(new RelationTablesHandler());
+        chain2.setNextHandleChain(new RelationTableHandler());
+
+    }
+
     @Autowired
     DictService dictService;
 
@@ -29,48 +44,12 @@ public class DictAop {
     public Object transOne(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed;
         try {
+            ONode data = ONode.load(joinPoint.proceed());
+
             dictHelper.initParserClass(joinPoint, "1");
+            chain.handle(dictHelper, data , dictService);
 
-            // 获取解析类中需要解析的字段
-            Class<?> returnType = dictHelper.returnType;
-            Class<?> dictParseClass = dictHelper.dictParseClass;
-            Field[] declaredFields = dictParseClass.getDeclaredFields();
-
-            // 多关联表
-            RelationTables relationTables = dictParseClass.getDeclaredAnnotation(RelationTables.class);
-
-            // 单关联表
-            RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
-            Class<?> target = relationTable.target();
-
-
-            proceed = joinPoint.proceed();
-            ONode data = ONode.load(proceed);
-            String key = dictHelper.key;
-            Object item = data.select("$." + key).toObject(dictParseClass);
-            Map<String, String> dictMap;
-            for (Field field : declaredFields) {
-
-                DictValue annotation = field.getAnnotation(DictValue.class);
-                if (annotation == null) {
-                    continue;
-                }
-                String ref = annotation.ref();
-                dictMap = dictService.getDict(ref);
-                // 字段名
-                String name = field.getName();
-                // 获取方法名
-                Method declaredMethod = dictParseClass.getDeclaredMethod("get" + StringUtils.capitalize(name));
-                Method declaredMethodSet = dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
-                // 获取字典值,并且设置
-                String invoke = (String) declaredMethod.invoke(item);
-                if(dictMap == null) dictMap = new HashMap<>();
-                String value = dictMap.get(invoke);
-                declaredMethodSet.invoke(item, value == null ? "" : value);
-            }
-            // 设置数据
-            data.set("data", ONode.load(item));
-            proceed = ONode.deserialize(ONode.stringify(data), returnType);
+            proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
             throw new Exception("解析失败");
@@ -109,7 +88,7 @@ public class DictAop {
                 Method declaredMethod = dictParseClass.getDeclaredMethod("get" + StringUtils.capitalize(name));
                 Method declaredMethodSet = dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
 
-                if(dictMap == null) dictMap = new HashMap<>();
+                if (dictMap == null) dictMap = new HashMap<>();
                 // 获取字典值,并且设置
                 for (Object item : list1) {
                     String invoke = (String) declaredMethod.invoke(item);
@@ -139,14 +118,14 @@ public class DictAop {
         return proceed;
     }
 
-    static class DictHelper {
-        ProceedingJoinPoint joinPoint;
+    public static class DictHelper {
+        public ProceedingJoinPoint joinPoint;
 
-        Class<?> dictParseClass;
+        public Class<?> dictParseClass;
 
-        Class<?> returnType;
+        public Class<?> returnType;
 
-        String key;
+        public String key;
 
         public void initParserClass(ProceedingJoinPoint joinPoint, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
             this.joinPoint = joinPoint;

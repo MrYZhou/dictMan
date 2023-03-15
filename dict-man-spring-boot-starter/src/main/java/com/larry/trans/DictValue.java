@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 public @interface DictValue {
     // 需要联表的类
     Class<?> targetTable() default Object.class;
+    // 翻译类型
+    String type() default "simple";
 
     // 关联表的字段
     String value() default "";

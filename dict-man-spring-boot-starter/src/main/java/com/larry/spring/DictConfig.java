@@ -1,5 +1,6 @@
 package com.larry.spring;
 
+import com.larry.service.DictService;
 import com.larry.service.MybatisDictService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ public class DictConfig {
     @Bean
     @Primary
     @ConditionalOnClass(SqlSessionFactory.class)
-    public MybatisDictService mybatisDictService() {
+    public DictService mybatisDictService() {
         return new MybatisDictService();
     }
     // 切面

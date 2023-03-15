@@ -1,6 +1,6 @@
 package com.example.springdemo;
 
-import com.larry.service.MybatisDictService;
+import com.larry.service.DictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class SpringdemoApplication implements ApplicationListener<ApplicationStartedEvent> {
     //    // 初始化字典的数据
     @Autowired
-    MybatisDictService dictService;
+    DictService dictService;
 
     public static void main(String[] args) {
         SpringApplication.run(SpringdemoApplication.class, args);
