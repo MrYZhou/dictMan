@@ -4,10 +4,13 @@ package  com.example.springdemo.spring.book.model;
 import com.example.springdemo.spring.book.DictEntity;
 import com.larry.trans.DictValue;
 import com.larry.trans.RelationTable;
+import com.larry.trans.RelationTables;
 import lombok.Data;
 
 @Data
-@RelationTable(bindKey = "id",target = DictEntity.class)
+@RelationTables({
+        @RelationTable(bindKey = "id",target = DictEntity.class)
+})
 public class BookInfo {
 
     String id;

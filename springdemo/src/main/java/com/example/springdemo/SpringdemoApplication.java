@@ -1,6 +1,6 @@
 package com.example.springdemo;
 
-import com.larry.spring.MybatisDictService;
+import com.larry.service.MybatisDictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

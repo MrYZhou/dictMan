@@ -1,5 +1,6 @@
 package com.larry.spring;
 
+import com.larry.service.MybatisDictService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

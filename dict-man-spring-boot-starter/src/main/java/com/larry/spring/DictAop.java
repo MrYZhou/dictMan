@@ -1,5 +1,6 @@
 package com.larry.spring;
 
+import com.larry.service.DictService;
 import com.larry.trans.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -37,6 +38,7 @@ public class DictAop {
 
             // 多关联表
             RelationTables relationTables = dictParseClass.getDeclaredAnnotation(RelationTables.class);
+
             // 单关联表
             RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
             Class<?> target = relationTable.target();
