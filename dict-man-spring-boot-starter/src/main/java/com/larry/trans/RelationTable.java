@@ -11,7 +11,7 @@ public @interface RelationTable {
 
     Class<?> target();
     // 大部分情况认为外键是关联表的id
-    String bindKey() default "id";
 
 
+    String primaryKey() default "id";;
 }

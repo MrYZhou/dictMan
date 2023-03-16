@@ -28,6 +28,8 @@ public class BookEntity {
     private LocalDateTime createTime;
     @TableField(value = "modifyTime", fill = FieldFill.INSERT)
     private LocalDateTime modifyTime;
+    @TableField("dictId")
+    private String dictId;
 
 
 }

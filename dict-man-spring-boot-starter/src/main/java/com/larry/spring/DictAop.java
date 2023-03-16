@@ -47,7 +47,14 @@ public class DictAop {
             ONode data = ONode.load(joinPoint.proceed());
 
             dictHelper.initParserClass(joinPoint, "1");
-            chain.handle(dictHelper, data , dictService);
+            // 获取解析类中需要解析的字段
+            Class<?> dictParseClass = dictHelper.dictParseClass;
+            Field[] declaredFields = dictParseClass.getDeclaredFields();
+
+            for (Field field : declaredFields) {
+                chain.handle(dictHelper, data , dictService,field);
+            }
+
 
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
@@ -69,7 +76,6 @@ public class DictAop {
             Class<?> dictParseClass = dictHelper.dictParseClass;
             String key = dictHelper.key;
             Field[] declaredFields = dictParseClass.getDeclaredFields();
-
             proceed = joinPoint.proceed();
 
             ONode data = ONode.load(proceed);

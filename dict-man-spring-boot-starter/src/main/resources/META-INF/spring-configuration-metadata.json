@@ -1,0 +1,16 @@
+{
+  "groups": [],
+  "hints": [],
+  "properties": [
+    {
+      "name": "dictman.primaryKey",
+      "type": "java.lang.String",
+      "description": "default primaryKey name (配置默认的表主键key名)"
+    },
+    {
+      "name": "dictman.resultList",
+      "type": "java.lang.String",
+      "description": "default response list key(默认响应的list key)"
+    }
+  ]
+}

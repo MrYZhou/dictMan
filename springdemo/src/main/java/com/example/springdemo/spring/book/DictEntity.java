@@ -15,6 +15,4 @@ public class DictEntity {
     private String name;
 
 
-    @TableField("type")
-    private Integer type;
 }

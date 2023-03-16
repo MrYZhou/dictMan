@@ -18,6 +18,9 @@ spring:
     password: root
     hikari:
       max-lifetime: 60000
+dictman:
+  primaryKey: id
+  resultList: data.list
 # orm??
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml

@@ -8,11 +8,12 @@ import org.noear.snack.ONode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 
 public class RelationTablesHandler extends  HandleChain implements DictHandler{
 
     @Override
-    public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         // 获取解析类中需要解析的字段
         Class<?> returnType = dictHelper.returnType;
         Class<?> dictParseClass = dictHelper.dictParseClass;
@@ -23,10 +24,17 @@ public class RelationTablesHandler extends  HandleChain implements DictHandler{
         if(relationTables != null){
             RelationTable[] list = relationTables.value();
             for (RelationTable relationTable : list) {
-//            this.nextHandle(dictHelper,data);
+                RelationTableHandler handler = new RelationTableHandler();
+                handler.setRelationTable(relationTable);
+                this.setNextHandleChain(handler);
+                this.nextHandle(dictHelper,data,dictService, field);
             }
 
+        }else{
+            this.nextHandle(dictHelper,data,dictService, field);
         }
-        this.nextHandle(dictHelper,data,dictService);
+
     }
+
+
 }

@@ -1,10 +1,23 @@
 package com.larry.service;
 
+import org.noear.wood.DbContext;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
-public class DictService {
+public class DictService  implements  BaseService{
+    DbContext db;
+
+    public DbContext getDb() {
+        return db;
+    }
+
+    public void setDb(DbContext db) {
+        this.db = db;
+    }
+
     private final Map<String, Map<String, String>> dictType = new HashMap<>();
 
     // 比如字典是id转换名称,不需要加类别,因为雪花id之类生成策略已经保证分布式下也唯一。
@@ -27,6 +40,12 @@ public class DictService {
         Map<String, String> map = dictType.get(key);
         if( map == null) map = new HashMap<>();
         return map;
+    }
+
+    @Override
+    public <T> List<T> getList(List<?> ids, T clazz) {
+
+        return null;
     }
 }
 
