@@ -86,7 +86,7 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         // 获取字典值,并且设置
         for (Object item1 : list1) {
             String invoke = (String) dictHelper.declaredMethod.invoke(item1);
-            String value = dictHelper.dictMap.get(invoke);
+            String value = dictMap.get(invoke);
             dictHelper.declaredMethodSet.invoke(item1, value == null ? "" : value);
         }
 
