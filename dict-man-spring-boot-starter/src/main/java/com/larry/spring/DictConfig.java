@@ -11,11 +11,6 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class DictConfig {
 
-    @Value("${dictman.primaryKey}")
-    private String primaryKey;
-    @Value("${dictman.resultList}")
-    private String resultList;
-
     @Value("${spring.datasource.username}")
     private String name;
 

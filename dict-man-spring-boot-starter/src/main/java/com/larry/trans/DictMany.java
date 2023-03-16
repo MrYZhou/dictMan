@@ -13,5 +13,5 @@ public @interface DictMany {
     Class<?> value();
 
     // 数据解析的key,默认解析data.list
-    String key() default "data.list";
+    String key() default "";
 }

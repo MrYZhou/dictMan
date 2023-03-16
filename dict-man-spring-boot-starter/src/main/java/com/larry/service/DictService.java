@@ -3,12 +3,13 @@ package com.larry.service;
 import org.noear.wood.DbContext;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
-public class DictService  implements  BaseService{
+public class DictService{
     DbContext db;
+
+
 
     public DbContext getDb() {
         return db;
@@ -42,10 +43,6 @@ public class DictService  implements  BaseService{
         return map;
     }
 
-    @Override
-    public <T> List<T> getList(List<?> ids, T clazz) {
 
-        return null;
-    }
 }
 

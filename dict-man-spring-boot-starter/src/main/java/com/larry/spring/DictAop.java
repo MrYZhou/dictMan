@@ -7,20 +7,38 @@ import com.larry.handle.SimpleDataHandler;
 import com.larry.service.DictService;
 import com.larry.trans.DictMany;
 import com.larry.trans.DictOne;
+import com.larry.trans.DictValue;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.noear.snack.ONode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 @Aspect
 @Component
 public class DictAop {
+
+    private static  String primaryKey;
+
+    @Value("${dictman.primaryKey}")
+    public void setPrimaryKey(String value) {
+        primaryKey = value;
+    }
+
+    private static String resultList = "";
+    @Value("${dictman.resultList}")
+    public void setResultList(String value) {
+        resultList = value;
+    }
 
     static DictHelper dictHelper = new DictHelper();
     static HandleChain chain = null;
@@ -41,13 +59,24 @@ public class DictAop {
         try {
             ONode data = ONode.load(joinPoint.proceed());
 
-            dictHelper.initParserClass(joinPoint, "1");
+            dictHelper.initParserClass(joinPoint, dictService,"1");
             // 获取解析类中需要解析的字段
             Field[] declaredFields = dictHelper.dictParseClass.getDeclaredFields();
             for (Field field : declaredFields) {
+                DictValue annotation = field.getAnnotation(DictValue.class);
+                if (annotation == null) {
+                    continue;
+                }
+                dictHelper.setDictValue(annotation);
+                // 字段名
+                String name = field.getName();
+                // 获取方法名
+                Method declaredMethod = dictHelper.dictParseClass.getDeclaredMethod("get" + StringUtils.capitalize(name));
+                Method declaredMethodSet = dictHelper.dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
+                dictHelper.setDeclaredMethod(declaredMethod);
+                dictHelper.setDeclaredMethodSet(declaredMethodSet);
                 chain.handle(dictHelper, data , dictService,field);
             }
-
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
@@ -62,13 +91,24 @@ public class DictAop {
         try {
             ONode data = ONode.load(joinPoint.proceed());
 
-            dictHelper.initParserClass(joinPoint, "2");
+            dictHelper.initParserClass(joinPoint, dictService, "2");
             // 获取解析类中需要解析的字段
             Field[] declaredFields = dictHelper.dictParseClass.getDeclaredFields();
             for (Field field : declaredFields) {
+                DictValue annotation = field.getAnnotation(DictValue.class);
+                if (annotation == null) {
+                    continue;
+                }
+                dictHelper.setDictValue(annotation);
+                // 字段名
+                String name = field.getName();
+                // 获取方法名
+                Method declaredMethod = dictHelper.dictParseClass.getDeclaredMethod("get" + StringUtils.capitalize(name));
+                Method declaredMethodSet = dictHelper.dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
+                dictHelper.setDeclaredMethod(declaredMethod);
+                dictHelper.setDeclaredMethodSet(declaredMethodSet);
                 chain.handleBatch(dictHelper, data , dictService,field);
             }
-
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
@@ -78,6 +118,12 @@ public class DictAop {
     }
 
     public static class DictHelper {
+        public Map<String, String> dictMap;
+
+        public DictValue dictValue;
+        public Method declaredMethod;
+        public Method declaredMethodSet;
+
         public ProceedingJoinPoint joinPoint;
 
         public Class<?> dictParseClass;
@@ -85,9 +131,11 @@ public class DictAop {
         public Class<?> returnType;
 
         public String key;
+        DictService dictService;
 
-        public void initParserClass(ProceedingJoinPoint joinPoint, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
+        public void initParserClass(ProceedingJoinPoint joinPoint, DictService dictService, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
             this.joinPoint = joinPoint;
+            this.dictService = dictService;
             Class<?> targetCls = joinPoint.getTarget().getClass();
             // 得到当前方法签名上面的解析类
             MethodSignature ms = (MethodSignature) joinPoint.getSignature();
@@ -103,6 +151,14 @@ public class DictAop {
             } else {
                 DictMany annotation = targetMethod.getAnnotation(DictMany.class);
                 key = annotation.key();
+                // 如果是空的,取配置文件属性
+                if("".equals(key)){
+                    key = resultList;
+                }
+                //还为空,则处理为data.list
+                if("".equals(key) ){
+                    key = "data.list";
+                }
                 dictClass = annotation.value();
             }
             this.key = key;
@@ -117,6 +173,42 @@ public class DictAop {
         public void setJoinPoint(ProceedingJoinPoint joinPoint) {
             this.joinPoint = joinPoint;
         }
+
+        public DictService getDictService() {
+            return dictService;
+        }
+
+        public void setDictService(DictService dictService) {
+            this.dictService = dictService;
+        }
+
+        public DictValue getDictValue() {
+            return dictValue;
+        }
+
+        public void setDictValue(DictValue dictValue) {
+            this.dictValue = dictValue;
+            String ref = dictValue.ref();
+            dictMap = dictService.getDict(ref);
+            if (dictMap == null) dictMap = new HashMap<>();
+        }
+
+        public Method getDeclaredMethod() {
+            return declaredMethod;
+        }
+
+        public void setDeclaredMethod(Method declaredMethod) {
+            this.declaredMethod = declaredMethod;
+        }
+
+        public Method getDeclaredMethodSet() {
+            return declaredMethodSet;
+        }
+
+        public void setDeclaredMethodSet(Method declaredMethodSet) {
+            this.declaredMethodSet = declaredMethodSet;
+        }
+
     }
 
 }

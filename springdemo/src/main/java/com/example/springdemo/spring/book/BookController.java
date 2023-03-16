@@ -27,7 +27,7 @@ public class BookController {
      * @return
      */
     @PostMapping("/list")
-    @DictMany(value = BookInfo.class,key = "data.records")
+    @DictMany(value = BookInfo.class)
     public AppResult<Object> list(@RequestBody @Validated BookPage page) throws NoSuchMethodException {
         QueryWrapper<BookEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(BookEntity::getName, page.getName());
