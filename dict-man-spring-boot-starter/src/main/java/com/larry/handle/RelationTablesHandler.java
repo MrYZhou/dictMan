@@ -35,7 +35,11 @@ public class RelationTablesHandler extends  HandleChain implements DictHandler{
             }
 
         }else{
-            this.nextHandle(dictHelper,data,dictService, field);
+            if(RelationDataType.manyData.equals(this.relationDataType)){
+                this.nextBatchHandle(dictHelper,data,dictService, field);
+            }else{
+                this.nextHandle(dictHelper,data,dictService, field);
+            }
         }
 
     }

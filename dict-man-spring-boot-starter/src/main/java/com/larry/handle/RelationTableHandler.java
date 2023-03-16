@@ -65,29 +65,43 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         Class<?> dictParseClass = dictHelper.dictParseClass;
         //  单关联表
         RelationTable relationTable = this.relationTable != null ? this.relationTable : dictParseClass.getDeclaredAnnotation(RelationTable.class);
-
-        String key = dictHelper.key;
-        List<?> item = data.select("$." + key).toObjectList(dictHelper.dictParseClass);
-        if (relationTable != null) {
-            Class<?> target = relationTable.target();
-            String primaryKey = relationTable.primaryKey();
-            String tableName = target.getDeclaredAnnotation(TableName.class).value();
-            String dictName = field.getDeclaredAnnotation(DictValue.class).value();
-            List<String> list = data.select("$..dictId").toObjectList(String.class);
-            List<Map<String, Object>> result = dictService.getDb().table(tableName).whereIn(primaryKey, list).selectMapList(primaryKey + "," + dictName);
-            // 转成map字典
-            HashMap<String, String> dictMap = new HashMap<>();
-            for (Map<String, Object> map : result) {
-                Object[] objects = map.values().toArray();
-                dictMap.put((String) objects[0], (String) objects[1]);
-            }
-            // 获取字典值,并且设置
-            String invoke = (String) dictHelper.declaredMethod.invoke(item);
-            String value = dictMap.get(invoke);
-            dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
-            data.set("data", ONode.load(item));
-
+        if(relationTable==null){
+            return;
         }
+        String key = dictHelper.key;
+        List<?> list1 = data.select("$." + key).toObjectList(dictHelper.dictParseClass);
+        Class<?> target = relationTable.target();
+        String primaryKey = relationTable.primaryKey();
+        String tableName = target.getDeclaredAnnotation(TableName.class).value();
+        String dictName = field.getDeclaredAnnotation(DictValue.class).value();
+        List<String> list = data.select("$..dictId").toObjectList(String.class);
+        List<Map<String, Object>> result = dictService.getDb().table(tableName).whereIn(primaryKey, list).selectMapList(primaryKey + "," + dictName);
+        // 转成map字典
+        HashMap<String, String> dictMap = new HashMap<>();
+        for (Map<String, Object> map : result) {
+            Object[] objects = map.values().toArray();
+            dictMap.put((String) objects[0], (String) objects[1]);
+        }
+
+        // 获取字典值,并且设置
+        for (Object item1 : list1) {
+            String invoke = (String) dictHelper.declaredMethod.invoke(item1);
+            String value = dictHelper.dictMap.get(invoke);
+            dictHelper.declaredMethodSet.invoke(item1, value == null ? "" : value);
+        }
+
+        // 设置数据
+        int index = -1;
+        for (int i = key.length() - 1; i > 0; i--) {
+            char c = key.charAt(i);
+            if (c == '.') {
+                index = i;
+            }
+        }
+        String path = key.substring(0, index);
+        String dataKey = key.substring(index + 1);
+
+        data.select("$." + path).set(dataKey, ONode.load(list1));
     }
 
 
