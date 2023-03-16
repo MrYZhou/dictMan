@@ -12,6 +12,8 @@ import java.sql.SQLException;
 
 public class RelationTablesHandler extends  HandleChain implements DictHandler{
 
+    String relationDataType;
+
     @Override
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         // 获取解析类中需要解析的字段
@@ -24,7 +26,12 @@ public class RelationTablesHandler extends  HandleChain implements DictHandler{
             for (RelationTable relationTable : list) {
                 handler.setRelationTable(relationTable);
                 this.setNextHandleChain(handler);
-                this.nextHandle(dictHelper,data,dictService, field);
+                if(RelationDataType.manyData.equals(this.relationDataType)){
+                    this.nextBatchHandle(dictHelper,data,dictService, field);
+                }else{
+                    this.nextHandle(dictHelper,data,dictService, field);
+                }
+
             }
 
         }else{
@@ -36,7 +43,15 @@ public class RelationTablesHandler extends  HandleChain implements DictHandler{
     @Override
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
 
+        this.setRelationDataType(RelationDataType.manyData);
+        this.handle(dictHelper, data, dictService,field);
     }
 
+    public String getRelationDataType() {
+        return relationDataType;
+    }
 
+    public void setRelationDataType(String relationDataType) {
+        this.relationDataType = relationDataType;
+    }
 }
