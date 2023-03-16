@@ -30,4 +30,10 @@ public abstract class HandleChain implements DictHandler{
 
     }
 
+    protected void nextBatchHandle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        HandleChain chain = this.getNextHandleChain();
+        if(chain!=null){
+            chain.handleBatch(dictHelper, data, dictService,field);
+        }
+    }
 }

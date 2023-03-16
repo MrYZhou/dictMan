@@ -7,7 +7,6 @@ import com.larry.handle.SimpleDataHandler;
 import com.larry.service.DictService;
 import com.larry.trans.DictMany;
 import com.larry.trans.DictOne;
-import com.larry.trans.DictValue;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,13 +14,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.noear.snack.ONode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Aspect
 @Component
@@ -48,13 +43,10 @@ public class DictAop {
 
             dictHelper.initParserClass(joinPoint, "1");
             // 获取解析类中需要解析的字段
-            Class<?> dictParseClass = dictHelper.dictParseClass;
-            Field[] declaredFields = dictParseClass.getDeclaredFields();
-
+            Field[] declaredFields = dictHelper.dictParseClass.getDeclaredFields();
             for (Field field : declaredFields) {
                 chain.handle(dictHelper, data , dictService,field);
             }
-
 
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
@@ -68,55 +60,16 @@ public class DictAop {
     public Object transMany(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed;
         try {
+            ONode data = ONode.load(joinPoint.proceed());
 
             dictHelper.initParserClass(joinPoint, "2");
-
             // 获取解析类中需要解析的字段
-            Class<?> returnType = dictHelper.returnType;
-            Class<?> dictParseClass = dictHelper.dictParseClass;
-            String key = dictHelper.key;
-            Field[] declaredFields = dictParseClass.getDeclaredFields();
-            proceed = joinPoint.proceed();
-
-            ONode data = ONode.load(proceed);
-            List<?> list1 = data.select("$." + key).toObjectList(dictParseClass);
-            Map<String, String> dictMap;
+            Field[] declaredFields = dictHelper.dictParseClass.getDeclaredFields();
             for (Field field : declaredFields) {
-                if (!field.isAnnotationPresent(DictValue.class)) {
-                    continue;
-                }
-                DictValue annotation = field.getAnnotation(DictValue.class);
-                String ref = annotation.ref();
-                dictMap = dictService.getDict(ref);
-                // 字段名
-                String name = field.getName();
-                // 获取方法
-                Method declaredMethod = dictParseClass.getDeclaredMethod("get" + StringUtils.capitalize(name));
-                Method declaredMethodSet = dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
-
-                if (dictMap == null) dictMap = new HashMap<>();
-                // 获取字典值,并且设置
-                for (Object item : list1) {
-                    String invoke = (String) declaredMethod.invoke(item);
-                    String value = dictMap.get(invoke);
-                    declaredMethodSet.invoke(item, value == null ? "" : value);
-                }
+                chain.handleBatch(dictHelper, data , dictService,field);
             }
 
-
-            // 设置数据
-            int index = -1;
-            for (int i = key.length() - 1; i > 0; i--) {
-                char c = key.charAt(i);
-                if (c == '.') {
-                    index = i;
-                }
-            }
-            String path = key.substring(0, index);
-            String dataKey = key.substring(index + 1);
-
-            data.select("$." + path).set(dataKey, ONode.load(list1));
-            proceed = ONode.deserialize(ONode.stringify(data), returnType);
+            proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
             throw new Exception("解析失败");

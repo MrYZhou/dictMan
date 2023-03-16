@@ -66,5 +66,10 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
 
     }
 
+    @Override
+    public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
+
+    }
+
 
 }

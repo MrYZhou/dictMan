@@ -26,6 +26,6 @@ public class BookInfo {
     String type;
 
     // 2. 关联表id的翻译建议通过newKey加个别名
-    @DictValue("name")
-    String dictId;
+//    @DictValue("name")
+//    String dictId;
 }
