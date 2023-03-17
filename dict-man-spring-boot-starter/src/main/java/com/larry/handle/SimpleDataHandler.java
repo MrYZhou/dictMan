@@ -15,14 +15,11 @@ public class SimpleDataHandler extends HandleChain {
 
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
 
-        String bindValue = dictHelper.dictValue.value();
-        if ("".equals(bindValue)) {
-            Class<?> dictParseClass = dictHelper.dictParseClass;
-            String key = dictHelper.key;
-            Object item = data.select("$." + key).toObject(dictParseClass);
+        if ("".equals(dictHelper.dictValue.value())) {
+
+            Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
 
             String invoke = (String) dictHelper.declaredMethod.invoke(item);
-
             String value = dictHelper.dictMap.get(invoke);
             dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
             // 设置数据
@@ -36,21 +33,17 @@ public class SimpleDataHandler extends HandleChain {
     @Override
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
 
-        String bindValue = dictHelper.dictValue.value();
-        if ("".equals(bindValue)) {
-            Class<?> dictParseClass = dictHelper.dictParseClass;
-            String key = dictHelper.key;
-            List<?> list1 = data.select("$." + key).toObjectList(dictParseClass);
+        if ("".equals(dictHelper.dictValue.value())) {
+            List<?> list = data.select("$." + dictHelper.key).toObjectList(dictHelper.dictParseClass);
 
-            // 获取字典值,并且设置
-            for (Object item1 : list1) {
-                String invoke = (String) dictHelper.declaredMethod.invoke(item1);
+            for (Object item : list) {
+                String invoke = (String) dictHelper.declaredMethod.invoke(item);
                 String value = dictHelper.dictMap.get(invoke);
-                dictHelper.declaredMethodSet.invoke(item1, value == null ? "" : value);
+                dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
             }
 
             // 设置数据
-            RelationTableHandler.setData(data, key, list1);
+            RelationTableHandler.setData(data, dictHelper.key, list);
         } else {
             this.nextBatchHandle(dictHelper, data, dictService, field);
         }

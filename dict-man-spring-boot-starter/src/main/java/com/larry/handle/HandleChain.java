@@ -8,8 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
-public abstract class HandleChain implements DictHandler{
-
+public abstract class HandleChain implements DictHandler {
 
     private HandleChain nextHandleChain;
 
@@ -24,16 +23,16 @@ public abstract class HandleChain implements DictHandler{
 
     public void nextHandle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         HandleChain chain = this.getNextHandleChain();
-        if(chain!=null){
-            chain.handle(dictHelper, data, dictService,field);
+        if (chain != null) {
+            chain.handle(dictHelper, data, dictService, field);
         }
 
     }
 
     protected void nextBatchHandle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         HandleChain chain = this.getNextHandleChain();
-        if(chain!=null){
-            chain.handleBatch(dictHelper, data, dictService,field);
+        if (chain != null) {
+            chain.handleBatch(dictHelper, data, dictService, field);
         }
     }
 }

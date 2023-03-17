@@ -147,7 +147,7 @@ public class DictAop {
             // 配置数据源
             DictContext dbSource = targetMethod.getAnnotation(DictContext.class);
             dbContext = dictService.getDb(dbSource == null ? "main" : dbSource.value());
-            AssertUtils.notNull(dbContext,"数据源不存在");
+            AssertUtils.notNull(dbContext, "数据源不存在");
 
             Class<?> dictClass;
             String key;
