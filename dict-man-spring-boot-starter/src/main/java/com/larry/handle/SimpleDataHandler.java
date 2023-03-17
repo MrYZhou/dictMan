@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 
 public class SimpleDataHandler extends HandleChain {
@@ -19,10 +20,20 @@ public class SimpleDataHandler extends HandleChain {
 
             Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
 
+
+            // 设置数据
+            String newKey = dictHelper.dictValue.newKey();
             String invoke = (String) dictHelper.declaredMethod.invoke(item);
             String value = dictHelper.dictMap.get(invoke);
-            dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
-            // 设置数据
+            if("".equals(newKey)){
+
+                dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
+
+            }else{
+                Map<String, String> tempMap = DictService.getTempMap();
+                tempMap.put(newKey,value);
+            }
+
             data.set("data", ONode.load(item));
         } else {
             this.nextHandle(dictHelper, data, dictService, field);

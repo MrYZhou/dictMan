@@ -55,7 +55,15 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         }else{
             value = dictMap.get(invoke);
         }
-        dictHelper.declaredMethodSet.invoke(item, value);
+        String newKey = dictHelper.dictValue.newKey();
+        if("".equals(newKey)){
+            dictHelper.declaredMethodSet.invoke(item, value);
+        }else{
+            Map<String, String> tempMap = DictService.getTempMap();
+            tempMap.put(newKey,value);
+        }
+
+
         data.set("data", ONode.load(item));
 
     }

@@ -79,6 +79,19 @@ public class DictAop {
                 dictHelper.setDeclaredMethodSet(declaredMethodSet);
                 chain.handle(dictHelper, data, dictService, field);
             }
+
+            // 设置新key
+            Map<String, String> tempMap = dictService.getTempMap();
+            if(tempMap.size()>0){
+                Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
+                ONode load = ONode.load(item);
+                Map o = (Map)  load.toData();
+                tempMap.forEach( (k,v)->{
+                    o.put(k,v);
+                });
+                data.set("data", ONode.load(o));
+            }
+
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
@@ -111,6 +124,19 @@ public class DictAop {
                 dictHelper.setDeclaredMethodSet(declaredMethodSet);
                 chain.handleBatch(dictHelper, data, dictService, field);
             }
+
+            // 设置新key
+            Map<String, String> tempMap = DictService.getTempMap();
+            if(tempMap.size()>0){
+                Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
+                ONode load = ONode.load(item);
+                Map o = (Map)  load.toData();
+                tempMap.forEach( (k,v)->{
+                    o.put(k,v);
+                });
+                data.set("data", ONode.load(o));
+            }
+
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
         } catch (Throwable e) {
@@ -169,6 +195,9 @@ public class DictAop {
                 }
                 dictClass = annotation.value();
             }
+            // 清空缓存的key
+            DictService.getTempMap().clear();
+
             this.key = key;
             this.dictParseClass = dictClass;
             this.joinPoint = joinPoint;

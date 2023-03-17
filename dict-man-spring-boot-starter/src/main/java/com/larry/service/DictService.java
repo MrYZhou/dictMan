@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class DictService {
     private final Map<String, Map<String, String>> dictType = new HashMap<>();
+
+    private static  Map<String,String> tempMap = new HashMap<>();
     Map<String, DbContext> db = new HashMap<>();
 
     public Map<String, DbContext> getDb() {
@@ -20,6 +22,14 @@ public class DictService {
 
     public DbContext getDb(String tag) {
         return db.get(tag);
+    }
+
+    public static Map<String, String> getTempMap() {
+        return tempMap;
+    }
+
+    public static void setTempMap(Map<String, String> tempMap) {
+        DictService.tempMap = tempMap;
     }
 
     // 比如字典是id转换名称,不需要加类别,因为雪花id之类生成策略已经保证分布式下也唯一。
