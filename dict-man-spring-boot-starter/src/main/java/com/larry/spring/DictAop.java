@@ -83,13 +83,13 @@ public class DictAop {
             }
 
             // 设置新key
-            Map<String, String> tempMap = dictService.getTempMap();
-            if(tempMap.size()>0){
+            Map<String, String> tempMap = DictService.getTempMap();
+            if (tempMap.size() > 0) {
                 Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
                 ONode load = ONode.load(item);
-                Map o = (Map)  load.toData();
-                tempMap.forEach( (k,v)->{
-                    o.put(k,v);
+                Map o = (Map) load.toData();
+                tempMap.forEach((k, v) -> {
+                    o.put(k, v);
                 });
                 data.set("data", ONode.load(o));
             }
@@ -129,8 +129,22 @@ public class DictAop {
 
             // 设置新key
             List<?> list = dictService.getResultList();
-            if (list.size()>0) {
-                RelationTableHandler.setData(data, dictHelper.key, list);
+            if (list.size() > 0) {
+                List objects = new ArrayList();
+                List<?> result = data.select("$." + dictHelper.key).toObjectList(dictHelper.dictParseClass);
+                for (int i = 0; i < result.size(); i++) {
+                    Object item = result.get(i);
+                    ONode load = ONode.load(item);
+                    Map o = (Map) load.toData();
+                    for (Object o1 : list) {
+                        Map<String, String> map = (Map<String, String>) o1;
+                        map.forEach((k, v) -> {
+                            o.put(k, v);
+                        });
+                    }
+                    objects.add(ONode.load(o));
+                }
+                RelationTableHandler.setData(data, dictHelper.key, objects);
             }
 
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
