@@ -16,29 +16,7 @@ public class RelationTablesHandler extends HandleChain implements DictHandler {
 
     @Override
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
-        // 获取解析类中需要解析的字段
-        Class<?> dictParseClass = dictHelper.dictParseClass;
-        // 多关联表
-        RelationTables relationTables = dictParseClass.getDeclaredAnnotation(RelationTables.class);
-        if (relationTables != null) {
-            RelationTable[] list = relationTables.value();
-            RelationTableHandler handler = new RelationTableHandler();
-            for (RelationTable relationTable : list) {
-                handler.setRelationTable(relationTable);
-                this.setNextHandleChain(handler);
-                this.next(dictHelper, data, dictService, field);
-
-            }
-
-        } else {
-            RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
-            if (relationTable == null) {
-                return;
-            }
-            ((RelationTableHandler)this.getNextHandleChain()).setRelationTable(relationTable);
-            this.next(dictHelper, data, dictService, field);
-        }
-
+        this.handleByType(dictHelper, data, dictService, field, RelationDataType.oneData);
     }
 
     private void next(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -51,9 +29,35 @@ public class RelationTablesHandler extends HandleChain implements DictHandler {
 
     @Override
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
+        this.handleByType(dictHelper, data, dictService, field, RelationDataType.manyData);
+    }
 
-        this.setRelationDataType(RelationDataType.manyData);
-        this.handle(dictHelper, data, dictService, field);
+    private void handleByType(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field, String relationDataType) throws SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        this.setRelationDataType(relationDataType);
+
+        // 获取解析类中需要解析的字段
+        Class<?> dictParseClass = dictHelper.dictParseClass;
+        // 多关联表
+        RelationTables relationTables = dictParseClass.getDeclaredAnnotation(RelationTables.class);
+        if (relationTables != null) {
+            RelationTable[] list = relationTables.value();
+            RelationTableHandler handler = ((RelationTableHandler) this.getNextHandleChain());
+            for (RelationTable relationTable : list) {
+                handler.setRelationTable(relationTable);
+                this.setNextHandleChain(handler);
+                this.next(dictHelper, data, dictService, field);
+
+            }
+
+        } else {
+            RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
+            if (relationTable == null) {
+                return;
+            }
+            ((RelationTableHandler) this.getNextHandleChain()).setRelationTable(relationTable);
+            this.next(dictHelper, data, dictService, field);
+        }
+
     }
 
     public String getRelationDataType() {

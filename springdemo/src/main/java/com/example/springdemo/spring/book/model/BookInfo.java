@@ -20,11 +20,11 @@ public class BookInfo {
 //    String tag;
 //    private String did;
 
-    //1. 普通字典翻译
-//    @DictValue(ref="book")
-//    String type;
+//    1. 普通字典翻译
+    @DictValue(ref="book")
+    String type;
 
     // 2. 关联表id的翻译建议通过newKey加个别名
-    @DictValue("name")
+    @DictValue(value = "name",newKey = "bookName")
     String dictId;
 }

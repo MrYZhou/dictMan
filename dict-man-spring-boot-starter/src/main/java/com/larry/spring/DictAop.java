@@ -169,13 +169,13 @@ public class DictAop {
                 }
                 dictClass = annotation.value();
             }
-
             this.key = key;
             this.dictParseClass = dictClass;
             this.joinPoint = joinPoint;
             this.dictService = dictService;
             this.returnType = targetMethod.getReturnType();
         }
+
 
         public ProceedingJoinPoint getJoinPoint() {
             return joinPoint;
