@@ -3,6 +3,7 @@ package com.larry.service;
 import org.noear.wood.DbContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -10,6 +11,8 @@ public class DictService {
     private final Map<String, Map<String, String>> dictType = new HashMap<>();
 
     private static  Map<String,String> tempMap = new HashMap<>();
+
+    public  static List<?> resultList;
     Map<String, DbContext> db = new HashMap<>();
 
     public Map<String, DbContext> getDb() {
@@ -22,6 +25,14 @@ public class DictService {
 
     public DbContext getDb(String tag) {
         return db.get(tag);
+    }
+
+    public List<?> getResultList() {
+        return resultList;
+    }
+
+    public void setResultList(List<?> resultList) {
+        DictService.resultList = resultList;
     }
 
     public static Map<String, String> getTempMap() {

@@ -11,6 +11,7 @@ import org.noear.wood.utils.AssertUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +80,25 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         if(dictMap.size()==0){
             return;
         }
+        String newKey = dictHelper.dictValue.newKey();
+        ArrayList<Object> objects = new ArrayList<>();
         for (Object item : list) {
             String invoke = (String) dictHelper.declaredMethod.invoke(item);
             String value = dictMap.get(invoke);
-            dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
+            if ("".equals(newKey)) {
+                dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
+            } else {
+                // 设置新key
+                ONode load = ONode.load(item);
+                Map o = (Map)  load.toData();
+                o.put(newKey,value);
+                objects.add( ONode.load(o));
+            }
+        }
+        // 设置数据
+        if (!"".equals(newKey)) {
+            dictService.setResultList(objects);
+            return;
         }
 
         setData(data, dictHelper.key, list);

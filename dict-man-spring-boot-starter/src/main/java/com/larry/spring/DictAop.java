@@ -23,7 +23,9 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Aspect
@@ -126,15 +128,9 @@ public class DictAop {
             }
 
             // 设置新key
-            Map<String, String> tempMap = DictService.getTempMap();
-            if(tempMap.size()>0){
-                Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
-                ONode load = ONode.load(item);
-                Map o = (Map)  load.toData();
-                tempMap.forEach( (k,v)->{
-                    o.put(k,v);
-                });
-                data.set("data", ONode.load(o));
+            List<?> list = dictService.getResultList();
+            if (list.size()>0) {
+                RelationTableHandler.setData(data, dictHelper.key, list);
             }
 
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
@@ -197,6 +193,7 @@ public class DictAop {
             }
             // 清空缓存的key
             DictService.getTempMap().clear();
+            DictService.resultList = new ArrayList<>();
 
             this.key = key;
             this.dictParseClass = dictClass;

@@ -21,10 +21,10 @@ public class BookInfo {
 //    private String did;
 
 //    1. 普通字典翻译
-    @DictValue(ref="book",newKey = "bookName1")
+    @DictValue(ref="book")
     String type;
 
     // 2. 关联表id的翻译建议通过newKey加个别名
-    @DictValue(value = "name",newKey = "bookName2")
+//    @DictValue(value = "name",newKey = "bookName2")
     String dictId;
 }
