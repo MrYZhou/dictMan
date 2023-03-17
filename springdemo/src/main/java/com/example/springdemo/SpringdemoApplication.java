@@ -1,6 +1,7 @@
 package com.example.springdemo;
 
 import com.larry.service.DictService;
+import org.noear.wood.DbContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,8 @@ public class SpringdemoApplication implements ApplicationListener<ApplicationSta
     @Autowired
     DictService dictService;
 
+
+
     public static void main(String[] args) {
         SpringApplication.run(SpringdemoApplication.class, args);
     }
@@ -25,7 +28,21 @@ public class SpringdemoApplication implements ApplicationListener<ApplicationSta
         Map<String, String> transMap = new HashMap<>();
         transMap.put("0", "书籍1");
         transMap.put("1", "书籍2");
+        // 带类别的
         dictService.putDictType("book", transMap);
+        // 不带类别
+        dictService.putDictItem("355643017543027584","书籍3");
+
+        // 配置数据源
+        Map<String, DbContext> db = dictService.getDb();
+        String url = "jdbc:mysql://127.0.0.1:3306/study?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=" +
+                "UTC&allowPublicKeyRetrieval=true";
+        String username = "root";
+        String password ="root";
+        DbContext context  = new DbContext("",url,username,password);
+        db.put("main",context);
+        dictService.setDb(db);
+
     }
 
 }

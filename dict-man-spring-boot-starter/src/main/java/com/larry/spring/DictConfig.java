@@ -1,7 +1,6 @@
 package com.larry.spring;
 
 import com.larry.service.DictService;
-import org.noear.wood.DbContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,10 +25,7 @@ public class DictConfig {
     @Bean
     @Primary
     public DictService mybatisDictService() {
-        DictService dictService = new DictService();
-        DbContext db  = new DbContext("study",url,username,password);
-        dictService.setDb(db);
-        return dictService;
+        return new DictService();
     }
 
     // 切面

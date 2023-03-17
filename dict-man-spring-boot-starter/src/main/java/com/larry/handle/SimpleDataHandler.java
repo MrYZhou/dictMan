@@ -50,17 +50,7 @@ public class SimpleDataHandler extends HandleChain {
             }
 
             // 设置数据
-            int index = -1;
-            for (int i = key.length() - 1; i > 0; i--) {
-                char c = key.charAt(i);
-                if (c == '.') {
-                    index = i;
-                }
-            }
-            String path = key.substring(0, index);
-            String dataKey = key.substring(index + 1);
-
-            data.select("$." + path).set(dataKey, ONode.load(list1));
+            RelationTableHandler.setData(data, key, list1);
         } else {
             this.nextBatchHandle(dictHelper, data, dictService, field);
         }

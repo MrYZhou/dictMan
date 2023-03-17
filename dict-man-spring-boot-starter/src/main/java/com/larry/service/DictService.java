@@ -7,16 +7,18 @@ import java.util.Map;
 
 
 public class DictService{
-    DbContext db;
+    Map<String,DbContext> db = new HashMap<>();
 
 
-
-    public DbContext getDb() {
+    public Map<String, DbContext> getDb() {
         return db;
     }
 
-    public void setDb(DbContext db) {
+    public void setDb(Map<String, DbContext> db) {
         this.db = db;
+    }
+    public DbContext getDb(String tag) {
+        return db.get(tag);
     }
 
     private final Map<String, Map<String, String>> dictType = new HashMap<>();

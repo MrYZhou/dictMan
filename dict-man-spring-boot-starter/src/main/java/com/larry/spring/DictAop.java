@@ -5,6 +5,7 @@ import com.larry.handle.RelationTableHandler;
 import com.larry.handle.RelationTablesHandler;
 import com.larry.handle.SimpleDataHandler;
 import com.larry.service.DictService;
+import com.larry.trans.DictContext;
 import com.larry.trans.DictMany;
 import com.larry.trans.DictOne;
 import com.larry.trans.DictValue;
@@ -13,6 +14,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.noear.snack.ONode;
+import org.noear.wood.DbContext;
+import org.noear.wood.utils.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,21 +30,10 @@ import java.util.Map;
 @Component
 public class DictAop {
 
-    private static  String primaryKey;
-
-    @Value("${dictman.primaryKey}")
-    public void setPrimaryKey(String value) {
-        primaryKey = value;
-    }
-
-    private static String resultList = "";
-    @Value("${dictman.resultList}")
-    public void setResultList(String value) {
-        resultList = value;
-    }
-
     static DictHelper dictHelper = new DictHelper();
     static HandleChain chain = null;
+    private static String primaryKey;
+    private static String resultList = "";
 
     static {
         chain = new SimpleDataHandler();
@@ -53,13 +45,23 @@ public class DictAop {
     @Autowired
     DictService dictService;
 
+    @Value("${dictman.primaryKey}")
+    public void setPrimaryKey(String value) {
+        primaryKey = value;
+    }
+
+    @Value("${dictman.resultList}")
+    public void setResultList(String value) {
+        resultList = value;
+    }
+
     @Around("@annotation(com.larry.trans.DictOne)")
     public Object transOne(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed;
         try {
             ONode data = ONode.load(joinPoint.proceed());
 
-            dictHelper.initParserClass(joinPoint, dictService,"1");
+            dictHelper.initParserClass(joinPoint, dictService, "1");
             // 获取解析类中需要解析的字段
             Field[] declaredFields = dictHelper.dictParseClass.getDeclaredFields();
             for (Field field : declaredFields) {
@@ -75,7 +77,7 @@ public class DictAop {
                 Method declaredMethodSet = dictHelper.dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
                 dictHelper.setDeclaredMethod(declaredMethod);
                 dictHelper.setDeclaredMethodSet(declaredMethodSet);
-                chain.handle(dictHelper, data , dictService,field);
+                chain.handle(dictHelper, data, dictService, field);
             }
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
@@ -107,7 +109,7 @@ public class DictAop {
                 Method declaredMethodSet = dictHelper.dictParseClass.getDeclaredMethod("set" + StringUtils.capitalize(name), String.class);
                 dictHelper.setDeclaredMethod(declaredMethod);
                 dictHelper.setDeclaredMethodSet(declaredMethodSet);
-                chain.handleBatch(dictHelper, data , dictService,field);
+                chain.handleBatch(dictHelper, data, dictService, field);
             }
             proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
 
@@ -119,6 +121,8 @@ public class DictAop {
 
     public static class DictHelper {
         public Map<String, String> dictMap;
+
+        public DbContext dbContext;
 
         public DictValue dictValue;
         public Method declaredMethod;
@@ -134,15 +138,19 @@ public class DictAop {
         DictService dictService;
 
         public void initParserClass(ProceedingJoinPoint joinPoint, DictService dictService, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
-            this.joinPoint = joinPoint;
-            this.dictService = dictService;
+
             Class<?> targetCls = joinPoint.getTarget().getClass();
             // 得到当前方法签名上面的解析类
             MethodSignature ms = (MethodSignature) joinPoint.getSignature();
             Method targetMethod = targetCls.getDeclaredMethod(ms.getName(), ms.getParameterTypes());
+
+            // 配置数据源
+            DictContext dbSource = targetMethod.getAnnotation(DictContext.class);
+            dbContext = dictService.getDb(dbSource == null ? "main" : dbSource.value());
+            AssertUtils.notNull(dbContext,"数据源不存在");
+
             Class<?> dictClass;
             String key;
-
             // 获取解析类
             if ("1".equals(type)) {
                 DictOne annotation = targetMethod.getAnnotation(DictOne.class);
@@ -152,17 +160,20 @@ public class DictAop {
                 DictMany annotation = targetMethod.getAnnotation(DictMany.class);
                 key = annotation.key();
                 // 如果是空的,取配置文件属性
-                if("".equals(key)){
+                if ("".equals(key)) {
                     key = resultList;
                 }
                 //还为空,则处理为data.list
-                if("".equals(key) ){
+                if ("".equals(key)) {
                     key = "data.list";
                 }
                 dictClass = annotation.value();
             }
+
             this.key = key;
             this.dictParseClass = dictClass;
+            this.joinPoint = joinPoint;
+            this.dictService = dictService;
             this.returnType = targetMethod.getReturnType();
         }
 
@@ -209,6 +220,21 @@ public class DictAop {
             this.declaredMethodSet = declaredMethodSet;
         }
 
+        public Map<String, String> getDictMap() {
+            return dictMap;
+        }
+
+        public void setDictMap(Map<String, String> dictMap) {
+            this.dictMap = dictMap;
+        }
+
+        public DbContext getDbContext() {
+            return dbContext;
+        }
+
+        public void setDbContext(DbContext dbContext) {
+            this.dbContext = dbContext;
+        }
     }
 
 }
