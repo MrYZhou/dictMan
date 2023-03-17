@@ -6,6 +6,8 @@ import com.larry.spring.DictAop;
 import com.larry.trans.DictValue;
 import com.larry.trans.RelationTable;
 import org.noear.snack.ONode;
+import org.noear.snack.core.Feature;
+import org.noear.snack.core.Options;
 import org.noear.wood.utils.AssertUtils;
 
 import java.lang.reflect.Field;
@@ -44,9 +46,7 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         // 获取响应数据
         Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
-        if(item ==null){
-            return;
-        }
+        if(item ==null) return;
         // 获取字典值,并且设置
         HashMap<String, String> dictMap = this.getDictMap(dictHelper, data, field);
         String invoke = (String) dictHelper.declaredMethod.invoke(item);
@@ -56,14 +56,13 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         }else{
             value = dictMap.get(invoke);
         }
+        dictHelper.declaredMethodSet.invoke(item, value);
+
         String newKey = dictHelper.dictValue.newKey();
-        if("".equals(newKey)){
-            dictHelper.declaredMethodSet.invoke(item, value);
-        }else{
+        if(!"".equals(newKey)){
             Map<String, String> tempMap = DictService.getTempMap();
             tempMap.put(newKey,value);
         }
-
 
         data.set("data", ONode.load(item));
 
@@ -89,6 +88,8 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
                 dictHelper.declaredMethodSet.invoke(item, value == null ? "" : value);
             } else {
                 // 设置新key
+                Options opts = Options.def().add(Feature.SerializeNulls);
+                opts = null;
                 ONode load = ONode.load(item);
                 Map o = (Map)  load.toData();
                 o.put(newKey,value);
