@@ -31,6 +31,11 @@ public class RelationTablesHandler extends HandleChain implements DictHandler {
             }
 
         } else {
+            RelationTable relationTable = dictParseClass.getDeclaredAnnotation(RelationTable.class);
+            if (relationTable == null) {
+                return;
+            }
+            ((RelationTableHandler)this.getNextHandleChain()).setRelationTable(relationTable);
             this.next(dictHelper, data, dictService, field);
         }
 

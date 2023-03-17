@@ -41,11 +41,6 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
     @Override
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
 
-        // 获取解析类中需要解析的字段
-        Class<?> dictParseClass = dictHelper.dictParseClass;
-        //  单关联表
-        RelationTable relationTable = this.relationTable != null ? this.relationTable : dictParseClass.getDeclaredAnnotation(RelationTable.class);
-
         String key = dictHelper.key;
         Object item = data.select("$." + key).toObjectList(dictHelper.dictParseClass);
         if (relationTable != null) {
@@ -61,13 +56,7 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
 
     @Override
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
-        // 获取解析类中需要解析的字段
-        Class<?> dictParseClass = dictHelper.dictParseClass;
-        //  单关联表
-        RelationTable relationTable = this.relationTable != null ? this.relationTable : dictParseClass.getDeclaredAnnotation(RelationTable.class);
-        if (relationTable == null) {
-            return;
-        }
+
         // 获取响应数据
         String key = dictHelper.key;
         List<?> list = data.select("$." + key).toObjectList(dictHelper.dictParseClass);
