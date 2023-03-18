@@ -97,7 +97,10 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
 
         String tableName = getTableName();
         String primaryKey = relationTable.primaryKey();
-
+        String configPrimaryKey = dictHelper.primaryKey;
+        if("id".equals(primaryKey) && !configPrimaryKey.equals("id")){
+            primaryKey = configPrimaryKey;
+        }
         String dictName = field.getDeclaredAnnotation(DictValue.class).value();
         List<String> keylist = data.select("$..dictId").toObjectList(String.class);
         List<Map<String, Object>> result = dictHelper.dbContext.table(tableName).whereIn(primaryKey, keylist).selectMapList(primaryKey + "," + dictName);

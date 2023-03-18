@@ -172,6 +172,7 @@ public class DictAop {
         public Class<?> returnType;
 
         public String key;
+        public static String primaryKey;
         DictService dictService;
 
         public void initParserClass(ProceedingJoinPoint joinPoint, DictService dictService, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -206,6 +207,7 @@ public class DictAop {
                 }
                 dictClass = annotation.value();
             }
+            DictHelper.primaryKey = DictAop.primaryKey;
             // 清空缓存的key
             DictService.getTempMap().clear();
             DictService.resultList = new ArrayList<>();
