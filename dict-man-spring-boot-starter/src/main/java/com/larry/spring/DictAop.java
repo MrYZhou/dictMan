@@ -35,7 +35,7 @@ public class DictAop {
     static DictHelper dictHelper = new DictHelper();
     static HandleChain chain = null;
     private static String primaryKey;
-    private static String resultList = "";
+    private static String resultKey;
 
     static {
         chain = new SimpleDataHandler();
@@ -47,14 +47,15 @@ public class DictAop {
     @Autowired
     DictService dictService;
 
-    @Value("${dictman.primaryKey}")
+
+    @Value("${dictman.primaryKey:id}")
     public void setPrimaryKey(String value) {
         primaryKey = value;
     }
 
-    @Value("${dictman.resultList}")
-    public void setResultList(String value) {
-        resultList = value;
+    @Value("${dictman.resultKey:data.list}")
+    public void setResultKey(String value) {
+        resultKey = value;
     }
 
     @Around("@annotation(com.larry.trans.DictOne)")
@@ -197,7 +198,7 @@ public class DictAop {
                 key = annotation.key();
                 // 如果是空的,取配置文件属性
                 if ("".equals(key)) {
-                    key = resultList;
+                    key = resultKey;
                 }
                 //还为空,则处理为data.list
                 if ("".equals(key)) {
