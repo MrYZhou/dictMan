@@ -12,7 +12,7 @@
     <groupId>io.github.mryzhou</groupId>
 
     <artifactId>dict-man-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.0</version>
     <name>dict-man-spring-boot-starter</name>
     <description>dict-man-spring-boot-starter</description>
     <dependencies>
@@ -40,7 +40,7 @@
             <artifactId>snack3</artifactId>
             <version>3.2.61</version>
         </dependency>
-<!--        mybatis注解-->
+        <!--        mybatis注解-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>
