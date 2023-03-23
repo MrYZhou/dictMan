@@ -102,7 +102,7 @@ public class DictAop {
             proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
-            throw new Exception("解析失败");
+            throw new Exception("解析失败:"+e.getMessage());
         }
         return proceed;
     }
@@ -155,7 +155,7 @@ public class DictAop {
             proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
-            throw new Exception("解析失败");
+            throw new Exception("解析失败:"+e.getMessage());
         }
         return proceed;
     }
