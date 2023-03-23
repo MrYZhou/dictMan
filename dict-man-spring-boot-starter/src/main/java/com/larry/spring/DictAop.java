@@ -37,7 +37,7 @@ public class DictAop {
     static DictHelper dictHelper = new DictHelper();
     static HandleChain chain = null;
     private static String primaryKey;
-    private static String resultList = "";
+    private static String resultKey;
 
     static {
         chain = new SimpleDataHandler();
@@ -49,14 +49,15 @@ public class DictAop {
     @Autowired
     DictService dictService;
 
-    @Value("${dictman.primaryKey}")
+
+    @Value("${dictman.primaryKey:id}")
     public void setPrimaryKey(String value) {
         primaryKey = value;
     }
 
-    @Value("${dictman.resultList}")
-    public void setResultList(String value) {
-        resultList = value;
+    @Value("${dictman.resultKey:data.list}")
+    public void setResultKey(String value) {
+        resultKey = value;
     }
 
     private final  Options opts = Options.def().add(Feature.SerializeNulls);
@@ -87,13 +88,13 @@ public class DictAop {
             }
 
             // 设置新key
-            Map<String, String> tempMap = dictService.getTempMap();
-            if(tempMap.size()>0){
+            Map<String, String> tempMap = DictService.getTempMap();
+            if (tempMap.size() > 0) {
                 Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
                 ONode load = ONode.load(item);
-                Map o = (Map)  load.toData();
-                tempMap.forEach( (k,v)->{
-                    o.put(k,v);
+                Map o = (Map) load.toData();
+                tempMap.forEach((k, v) -> {
+                    o.put(k, v);
                 });
                 data.set("data", ONode.load(o));
             }
@@ -133,8 +134,22 @@ public class DictAop {
 
             // 设置新key
             List<?> list = dictService.getResultList();
-            if (list.size()>0) {
-                RelationTableHandler.setData(data, dictHelper.key, list);
+            if (list.size() > 0) {
+                List objects = new ArrayList();
+                List<?> result = data.select("$." + dictHelper.key).toObjectList(dictHelper.dictParseClass);
+                for (int i = 0; i < result.size(); i++) {
+                    Object item = result.get(i);
+                    ONode load = ONode.load(item);
+                    Map o = (Map) load.toData();
+                    for (Object o1 : list) {
+                        Map<String, String> map = (Map<String, String>) o1;
+                        map.forEach((k, v) -> {
+                            o.put(k, v);
+                        });
+                    }
+                    objects.add(ONode.load(o));
+                }
+                RelationTableHandler.setData(data, dictHelper.key, objects);
             }
 
             proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
@@ -161,6 +176,7 @@ public class DictAop {
         public Class<?> returnType;
 
         public String key;
+        public static String primaryKey;
         DictService dictService;
 
         public void initParserClass(ProceedingJoinPoint joinPoint, DictService dictService, String type) throws NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -187,7 +203,7 @@ public class DictAop {
                 key = annotation.key();
                 // 如果是空的,取配置文件属性
                 if ("".equals(key)) {
-                    key = resultList;
+                    key = resultKey;
                 }
                 //还为空,则处理为data.list
                 if ("".equals(key)) {
@@ -195,6 +211,7 @@ public class DictAop {
                 }
                 dictClass = annotation.value();
             }
+            DictHelper.primaryKey = DictAop.primaryKey;
             // 清空缓存的key
             DictService.getTempMap().clear();
             DictService.resultList = new ArrayList<>();

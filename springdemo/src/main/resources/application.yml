@@ -19,7 +19,7 @@ spring:
     hikari:
       max-lifetime: 60000
 dictman:
-  primaryKey: id    #默认表主键是解析id
+  primaryKey: F_id    #默认表主键是解析id
   resultList: data.records #默认data.list
 # orm??
 mybatis-plus:
