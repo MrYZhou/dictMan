@@ -17,45 +17,27 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.2.6.RELEASE</version>
-        </dependency>
-        <!--		让enableautoconfig注解生效-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>${springboot.version}</version>
-        </dependency>
-        <!--		配置yml数据提示-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${springboot.version}</version>
-            <optional>true</optional>
         </dependency>
         <!--		ORM-->
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>wood</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.8</version>
         </dependency>
 
         <!--aop支持-->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.5</version>
+            <version>1.9.19</version>
         </dependency>
         <!--		json库-->
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>snack3</artifactId>
-            <version>3.2.57</version>
+            <version>3.2.61</version>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
-        </dependency>
+<!--        mybatis注解-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>

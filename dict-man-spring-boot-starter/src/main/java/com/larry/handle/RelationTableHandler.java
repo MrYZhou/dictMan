@@ -44,9 +44,7 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         // 获取响应数据
         Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
-        if(item ==null){
-            return;
-        }
+        if(item ==null) return;
         // 获取字典值,并且设置
         HashMap<String, String> dictMap = this.getDictMap(dictHelper, data, field);
         String invoke = (String) dictHelper.declaredMethod.invoke(item);

@@ -23,6 +23,13 @@
     </properties>
 
     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>5.2.6.RELEASE</version>
+            </dependency>
+        </dependencies>
 <!--        <dependencies>-->
 <!--            <dependency>-->
 <!--                <groupId>org.springframework</groupId>-->
@@ -64,6 +71,7 @@
 <!--                <scope>compile</scope>-->
 <!--            </dependency>-->
 <!--        </dependencies>-->
+
     </dependencyManagement>
 
     <build>

@@ -20,7 +20,7 @@ public class SimpleDataHandler extends HandleChain {
         if ("".equals(dictHelper.dictValue.value())) {
 
             Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
-
+            if(item == null) return;
 
             // 设置数据
             String invoke = (String) dictHelper.declaredMethod.invoke(item);

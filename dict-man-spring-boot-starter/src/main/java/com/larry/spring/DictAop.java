@@ -14,6 +14,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.noear.snack.ONode;
+import org.noear.snack.core.Feature;
+import org.noear.snack.core.Options;
 import org.noear.wood.DbContext;
 import org.noear.wood.utils.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +59,13 @@ public class DictAop {
         resultList = value;
     }
 
+    private final  Options opts = Options.def().add(Feature.SerializeNulls);
     @Around("@annotation(com.larry.trans.DictOne)")
     public Object transOne(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed;
         try {
-            ONode data = ONode.load(joinPoint.proceed());
+
+            ONode data = ONode.load(joinPoint.proceed(),opts);
 
             dictHelper.initParserClass(joinPoint, dictService, "1");
             // 获取解析类中需要解析的字段
@@ -94,7 +98,7 @@ public class DictAop {
                 data.set("data", ONode.load(o));
             }
 
-            proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
+            proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
             throw new Exception("解析失败");
@@ -133,7 +137,7 @@ public class DictAop {
                 RelationTableHandler.setData(data, dictHelper.key, list);
             }
 
-            proceed = ONode.deserialize(ONode.stringify(data), dictHelper.returnType);
+            proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
             throw new Exception("解析失败");
