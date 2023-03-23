@@ -60,13 +60,14 @@ public class DictAop {
         resultKey = value;
     }
 
-    private final  Options opts = Options.def().add(Feature.SerializeNulls);
+    private final Options opts = Options.def().add(Feature.SerializeNulls);
+
     @Around("@annotation(com.larry.trans.DictOne)")
     public Object transOne(ProceedingJoinPoint joinPoint) throws Throwable {
         Object proceed;
         try {
 
-            ONode data = ONode.load(joinPoint.proceed(),opts);
+            ONode data = ONode.load(joinPoint.proceed(), opts);
 
             dictHelper.initParserClass(joinPoint, dictService, "1");
             // 获取解析类中需要解析的字段
@@ -99,10 +100,10 @@ public class DictAop {
                 data.set("data", ONode.load(o));
             }
 
-            proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
+            proceed = ONode.deserialize(ONode.load(data, opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
-            throw new Exception("解析失败:"+e.getMessage());
+            throw new Exception("解析失败:" + e.getMessage());
         }
         return proceed;
     }
@@ -141,21 +142,22 @@ public class DictAop {
                     Object item = result.get(i);
                     ONode load = ONode.load(item);
                     Map o = (Map) load.toData();
-                    for (Object o1 : list) {
-                        Map<String, String> map = (Map<String, String>) o1;
-                        map.forEach((k, v) -> {
-                            o.put(k, v);
-                        });
-                    }
+
+                    // 获取对应记录顺序的属性
+                    Object o1 = list.get(i);
+                    Map<String, String> map = (Map<String, String>) o1;
+                    map.forEach((k, v) -> {
+                        o.put(k, v);
+                    });
                     objects.add(ONode.load(o));
                 }
                 RelationTableHandler.setData(data, dictHelper.key, objects);
             }
 
-            proceed = ONode.deserialize(ONode.load(data,opts).toJson(), dictHelper.returnType);
+            proceed = ONode.deserialize(ONode.load(data, opts).toJson(), dictHelper.returnType);
 
         } catch (Throwable e) {
-            throw new Exception("解析失败:"+e.getMessage());
+            throw new Exception("解析失败:" + e.getMessage());
         }
         return proceed;
     }

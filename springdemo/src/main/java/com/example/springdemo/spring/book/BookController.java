@@ -1,4 +1,4 @@
-package  com.example.springdemo.spring.book;
+package com.example.springdemo.spring.book;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,6 +9,7 @@ import com.larry.trans.DictMany;
 import com.larry.trans.DictOne;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/book")
 public class BookController {
@@ -27,7 +28,7 @@ public class BookController {
      * @return
      */
     @PostMapping("/list")
-    @DictMany(value = BookInfo.class)
+    @DictMany(value = BookInfo.class, key = "data.records")
     public AppResult<Object> list(@RequestBody @Validated BookPage page) throws NoSuchMethodException {
         QueryWrapper<BookEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(BookEntity::getName, page.getName());
