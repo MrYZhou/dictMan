@@ -111,7 +111,7 @@
 
         </pluginManagement>
         <!--		传递给每一个子模块-->
-        <!-- <plugins>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -120,7 +120,7 @@
                     <target>8</target>
                 </configuration>
             </plugin>
-        </plugins> -->
+        </plugins>
 
         <resources>
             <resource>

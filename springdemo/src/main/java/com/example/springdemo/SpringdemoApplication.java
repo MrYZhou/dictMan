@@ -1,6 +1,5 @@
 package com.example.springdemo;
 
-import com.larry.service.DictService;
 import org.noear.wood.DbContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +9,8 @@ import org.springframework.context.ApplicationListener;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.larry.service.DictService;
 
 @SpringBootApplication
 public class SpringdemoApplication implements ApplicationListener<ApplicationStartedEvent> {
