@@ -148,3 +148,7 @@ dist
 *.rebel.xml
 #main-module/main/resources/config/
 resources/config/
+
+.project
+.settings
+.vscode

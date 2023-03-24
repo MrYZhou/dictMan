@@ -1,4 +1,4 @@
-package com.larry.base;
+package com.example.springdemo.base;
 
 import lombok.Data;
 
@@ -7,5 +7,5 @@ import java.util.List;
 @Data
 public class PageListVO<T> {
     List<T> list;
-    com.larry.base.PaginationVO<T> pagination;
+    PaginationVO<T> pagination;
 }

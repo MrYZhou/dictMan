@@ -1,4 +1,4 @@
-package com.larry.base;
+package com.example.springdemo.base;
 
 import org.noear.snack.ONode;
 

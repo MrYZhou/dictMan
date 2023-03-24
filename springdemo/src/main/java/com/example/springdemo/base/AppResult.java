@@ -48,9 +48,9 @@ public class AppResult<T> {
     }
 
 
-    public static <T> AppResult<T> page(List<T> list, com.larry.base.PaginationVO<T> pagination) {
+    public static <T> AppResult<T> page(List<T> list, PaginationVO<T> pagination) {
         AppResult<T> jsonData = new AppResult<T>();
-        com.larry.base.PageListVO<T> vo = new com.larry.base.PageListVO<>();
+        PageListVO<T> vo = new PageListVO<>();
         vo.setList(list);
         vo.setPagination(pagination);
         jsonData.setData ((T) vo);
