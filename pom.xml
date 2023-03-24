@@ -18,7 +18,7 @@
     <name>dictMan</name>
     <description>dictMan</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <springboot.version>2.7.0</springboot.version>
     </properties>
 
@@ -111,7 +111,7 @@
 
         </pluginManagement>
         <!--		传递给每一个子模块-->
-        <plugins>
+        <!-- <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -120,7 +120,7 @@
                     <target>8</target>
                 </configuration>
             </plugin>
-        </plugins>
+        </plugins> -->
 
         <resources>
             <resource>

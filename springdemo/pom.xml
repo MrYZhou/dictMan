@@ -13,9 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>springdemo</name>
     <description>springdemo</description>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+   
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -73,6 +71,8 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>
