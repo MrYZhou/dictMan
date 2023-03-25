@@ -21,9 +21,17 @@ spring:
 dictman:
   primaryKey: id    #默认表主键是解析id
   resultList: data.records #默认data.list
+
 # orm??
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
+  configuration: 
+    map-underscore-to-camel-case: true
+    #缓存
+    cache-enabled: false
+    #配置日志  log-impl:日志实现
+    log-impl : org.apache.ibatis.logging.slf4j.Slf4jImpl
+    # sql-explain-type: AGGREGATE
   global-config:
     banner: false #?????LOGO
     db-config:
@@ -32,3 +40,11 @@ mybatis-plus:
       logic-not-delete-value: 2 # ??????(??? 0)
       idType: ASSIGN_UUID #????????,????ASSIGN_ID,??long??id ,ASSIGN_UUID
       tablePrefix: null #????
+# PageHelper分页插件
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+
