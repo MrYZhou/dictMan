@@ -3,7 +3,9 @@ package com.example.springdemo.spring.book;
 
 import java.io.IOException;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.example.springdemo.base.AppResult;
 import com.example.springdemo.spring.book.model.BookInfo;
 import com.example.springdemo.spring.book.model.BookPage;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
         
     private final BookService bookService;
+    private IPage<BookEntity> page2;
 
     BookController(BookService bookService
     ) {
@@ -45,11 +48,12 @@ public class BookController {
      */
     @PostMapping("/list")
     // @DictMany(value = BookInfo.class, key = "data.records")
-    public AppResult<Object> list(@RequestBody @Validated BookPage page) throws NoSuchMethodException {
-        QueryWrapper<BookEntity> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(BookEntity::getName, page.getName());
+    public AppResult<Object> list(@RequestBody @Validated BookPage page) {
         
-        BookPage info = bookService.page(page, wrapper);
+
+        IPage<BookEntity> info = Db.page(page, Wrappers.lambdaQuery(BookEntity.class)
+        .eq(BookEntity::getName, page.getName()));
+
         return AppResult.success(info);
     }
 
