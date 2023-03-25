@@ -33,6 +33,7 @@ public class SpringdemoApplication implements ApplicationListener<ApplicationSta
         dictService.putDictType("book", transMap);
         // 不带类别
         dictService.putDictItem("355643017543027584","书籍3");
+        dictService.putDictItem("1","书籍1");
 
         // 配置数据源
         Map<String, DbContext> db = dictService.getDb();
