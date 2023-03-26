@@ -19,7 +19,6 @@
     <description>dictMan</description>
     <properties>
         <java.version>1.8</java.version>
-        <springboot.version>2.7.0</springboot.version>
     </properties>
 
     <dependencyManagement>
@@ -30,53 +29,10 @@
                 <version>5.2.6.RELEASE</version>
             </dependency>
         </dependencies>
-<!--        <dependencies>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework</groupId>-->
-<!--                <artifactId>spring-context</artifactId>-->
-<!--                <version>5.2.6.RELEASE</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.baomidou</groupId>-->
-<!--                <artifactId>mybatis-plus-core</artifactId>-->
-<!--                <version>3.5.3.1</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-autoconfigure</artifactId>-->
-<!--                <version>${springboot.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-configuration-processor</artifactId>-->
-<!--                <version>${springboot.version}</version>-->
-<!--                <optional>true</optional>-->
-<!--            </dependency>-->
-<!--            &lt;!&ndash;aop支持&ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>org.aspectj</groupId>-->
-<!--                <artifactId>aspectjweaver</artifactId>-->
-<!--                <version>1.9.5</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.projectlombok</groupId>-->
-<!--                <artifactId>lombok</artifactId>-->
-<!--                <optional>true</optional>-->
-<!--                <version>1.18.26</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot</artifactId>-->
-<!--                <version>${springboot.version}</version>-->
-<!--                <scope>compile</scope>-->
-<!--            </dependency>-->
-<!--        </dependencies>-->
-
     </dependencyManagement>
 
     <build>
         <pluginManagement>
-
             <plugins>
                 <plugin>
                     <!-- JDK版本配置 -->
