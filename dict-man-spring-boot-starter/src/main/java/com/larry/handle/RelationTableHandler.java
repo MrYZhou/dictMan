@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RelationTableHandler extends HandleChain implements DictHandler {
+public class RelationTableHandler extends HandleChain {
     RelationTable relationTable = null;
 
     public static void setData(ONode data, String key, List<?> list) {
@@ -39,7 +39,6 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
         this.relationTable = relationTable;
     }
 
-    @Override
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         // 获取响应数据
         Object item = data.select("$." + dictHelper.key).toObject(dictHelper.dictParseClass);
@@ -65,7 +64,7 @@ public class RelationTableHandler extends HandleChain implements DictHandler {
 
     }
 
-    @Override
+    
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
 
         // 获取响应数据

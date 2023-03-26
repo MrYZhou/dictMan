@@ -45,7 +45,7 @@ public class SimpleDataHandler extends HandleChain {
 
     }
 
-    @Override
+    
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
         // 如果不是简单类型直接放行
         if (!"".equals(dictHelper.dictValue.value())) {

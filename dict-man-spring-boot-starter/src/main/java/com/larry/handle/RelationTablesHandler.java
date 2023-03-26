@@ -10,11 +10,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
-public class RelationTablesHandler extends HandleChain implements DictHandler {
+public class RelationTablesHandler extends HandleChain {
 
     String relationDataType;
-
-    @Override
     public void handle(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, SQLException {
         this.handleByType(dictHelper, data, dictService, field, RelationDataType.oneData);
     }
@@ -27,7 +25,6 @@ public class RelationTablesHandler extends HandleChain implements DictHandler {
         }
     }
 
-    @Override
     public void handleBatch(DictAop.DictHelper dictHelper, ONode data, DictService dictService, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
         this.handleByType(dictHelper, data, dictService, field, RelationDataType.manyData);
     }
