@@ -14,7 +14,7 @@ import com.larry.service.DictService;
 
 @SpringBootApplication
 public class SpringdemoApplication implements ApplicationListener<ApplicationStartedEvent> {
-    //    // 初始化字典的数据
+    // 初始化字典的数据
     @Autowired
     DictService dictService;
 
