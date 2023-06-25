@@ -2,17 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.larry</groupId>
-        <artifactId>dictMan</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
-    </parent>
     <!--    借用github域名-->
     <groupId>io.github.mryzhou</groupId>
-
     <artifactId>dict-man-spring-boot-starter</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <name>dict-man-spring-boot-starter</name>
     <description>dict-man-spring-boot-starter</description>
     <dependencies>
@@ -20,6 +13,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>5.2.6.RELEASE</version>
         </dependency>
         <!--		ORM-->
         <dependency>
@@ -88,6 +82,22 @@
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    <!--    优先级比配置文件高,会从这个镜像站下载-->
+    <repositories>
+        <repository>
+            <id>nexus-tencentyun</id>
+            <name>aliyun maven</name>
+            <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+            <!-- 是否开启发布版构件下载 -->
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <!-- 是否开启快照版构件下载 -->
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <!-- 编译工具 -->
     <build>

@@ -10,7 +10,7 @@ java字典翻译
 <dependency>
     <groupId>io.github.mryzhou</groupId>
     <artifactId>dict-man-spring-boot-starter</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
@@ -118,5 +118,3 @@ public class BookInfo {
 dictman:
   primaryKey: id    #默认表主键是解析id
   resultList: data.records #默认data.list
-
-

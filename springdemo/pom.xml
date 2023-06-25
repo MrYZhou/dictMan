@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>springdemo</name>
     <description>springdemo</description>
-   
+
     <dependencies>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
@@ -66,10 +66,10 @@
         <dependency>
             <groupId>io.github.mryzhou</groupId>
             <artifactId>dict-man-spring-boot-starter</artifactId>
-            <version>1.2.0</version>
+            <version>1.3.0</version>
             <scope>compile</scope>
         </dependency>
-         
+
     </dependencies>
 
     <!-- 关键,配置不同的启动版本,和settings.json无关 -->
