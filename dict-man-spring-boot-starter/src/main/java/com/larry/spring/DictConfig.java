@@ -16,10 +16,4 @@ public class DictConfig {
         return new DictService();
     }
 
-    // 切面
-    @Bean
-    @Primary
-    public DictAop dictAop() {
-        return new DictAop();
-    }
 }
